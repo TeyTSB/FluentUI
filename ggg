@@ -1,0 +1,126 @@
+function SendMessage(url, message)
+    local http = game:GetService("HttpService")
+    local headers = {
+        ["Content-Type"] = "application/json"
+    }
+    local data = {
+        ["content"] = message,
+        ["username"] = "BoundlessHub Users"
+    }
+    local body = http:JSONEncode(data)
+    local response = request({
+        Url = url,
+        Method = "POST",
+        Headers = headers,
+        Body = body
+    })
+    print("Sent")
+end
+
+function SendMessageEMBED(url, embed)
+    local http = game:GetService("HttpService")
+    local headers = {
+        ["Content-Type"] = "application/json"
+    }
+    local data = {
+        ["embeds"] = {
+            {
+                ["title"] = embed.title,
+                ["description"] = embed.description,
+                ["color"] = 0x87CEEB,
+                ["fields"] = embed.fields,
+                ["footer"] = {
+                    ["text"] = embed.footer.text
+                }
+            }
+        },
+        ["username"] = "hub logger" 
+    }
+    local body = http:JSONEncode(data)
+    local response = request({
+        Url = url,
+        Method = "POST",
+        Headers = headers,
+        Body = body
+    })
+    print("Sent")
+end
+
+local player = game.Players.LocalPlayer
+local username = player.Name
+local avatarId = player.UserId
+
+local profileUrl = "https://www.roblox.com/tr/users/" .. avatarId .. "/profile"
+local currentTime = os.date("%Y-%m-%d %H:%M:%S")
+local url = "https://discord.com/api/webhooks/1316871369220423730/E0aW_ZRL_1JyLkgBEVhHAYfS-VR_i7elbl6O1PUdZhqEgDqw65SNhj3ktf6RPEvrVeV5"
+local gameId = tostring(game.PlaceId)
+local instanceId = game.JobId
+local joinLink = "https://www.roblox.com/games/start?placeId=" .. gameId .. "&launchData=" .. instanceId
+
+local deviceType = "Unknown"
+local deviceEmoji = ""
+local userInputService = game:GetService("UserInputService")
+
+if userInputService.TouchEnabled and not userInputService.KeyboardEnabled then
+    deviceType = "Mobile"
+    deviceEmoji = ""
+elseif userInputService.KeyboardEnabled and userInputService.MouseEnabled then
+    deviceType = "PC"
+    deviceEmoji = ""
+elseif userInputService.GamepadEnabled then
+    deviceType = "Console"
+    deviceEmoji = ""
+elseif userInputService.TouchEnabled and userInputService.KeyboardEnabled then
+    deviceType = "Tablet"
+    deviceEmoji = ""
+end
+
+if setclipboard then
+    setclipboard(instanceId)
+    print("Instance ID: " .. instanceId)
+else
+    print("")
+end
+
+local embed = {
+    ["title"] = "Someone Used fisch script",
+    ["description"] = "very skibidi man to do it",
+    ["color"] = 0x87CEEB,
+    ["fields"] = {
+        {
+            ["name"] = "UserName",
+            ["value"] = username,
+            ["inline"] = true
+        },
+        {
+            ["name"] = "Profile",
+            ["value"] = profileUrl,
+            ["inline"] = true
+        },
+        {
+            ["name"] = "Time",
+            ["value"] = currentTime,
+            ["inline"] = true
+        },
+        {
+            ["name"] = "Instance ID",
+            ["value"] = instanceId,
+            ["inline"] = true
+        },
+        {
+            ["name"] = "Device",
+            ["value"] = deviceEmoji .. " " .. deviceType,
+            ["inline"] = true
+        },
+        {
+            ["name"] = "Join Game Link",
+            ["value"] = joinLink,
+            ["inline"] = true
+        }
+    },
+    ["footer"] = {
+        ["text"] = "By meee"
+    }
+}
+
+SendMessageEMBED(url, embed)
